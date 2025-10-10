@@ -1,1 +1,1 @@
-Zmieniono konfigurację
+CREATE DATABASE firma;
