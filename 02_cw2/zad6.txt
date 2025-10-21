@@ -1,0 +1,33 @@
+a) SELECT SUM(ST_Length(geometry))
+FROM roads;
+
+b) SELECT name, ST_AsText(geometry), ST_Area(geometry), ST_Perimeter(geometry)
+FROM buildings WHERE name = 'BuildingA';
+
+c) SELECT name, ST_AREA(geometry) FROM buildings
+ORDER BY name;
+
+d) SELECT name, ST_PERIMETER(geometry) FROM buildings
+ORDER BY ST_AREA(geometry) DESC
+LIMIT 2;
+
+e) SELECT ST_Distance(b.geometry,p.geometry) AS distance_m
+FROM buildings b
+CROSS JOIN poi p
+WHERE b.name = 'BuildingC' AND p.name = 'K';
+
+f) WITH bC AS (SELECT geometry FROM buildings WHERE name = 'BuildingC'),
+bB AS (SELECT geometry FROM buildings WHERE name = 'BuildingB')
+SELECT ST_Area(ST_Difference(bC.geometry, ST_Buffer(bB.geometry, 0.5)))
+AS area_m2_part_of_BuildingC_gt_0_5_from_BuildingB
+FROM bC, bB;
+
+g) SELECT b.name
+FROM buildings b
+JOIN roads r ON r.name = 'RoadX'
+WHERE ST_Y(ST_Centroid(b.geometry)) > ST_Y(ST_StartPoint(r.geometry));
+
+h) WITH bC AS (SELECT geometry FROM buildings WHERE name = 'BuildingC'),
+poly AS (SELECT ST_GeomFromText('POLYGON((4 7, 6 7, 6 8, 4 8, 4 7))', 4326) AS geometry)
+SELECT ST_Area(ST_SymDifference(bC.geometry, poly.geometry)) AS symdiff_area_m2
+FROM bC, poly;
